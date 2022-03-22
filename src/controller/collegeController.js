@@ -1,0 +1,57 @@
+const CollegeModel = require("../models/collegeModel");
+const InternModel = require("../models/internModel");
+
+
+const isValid = function (value) {
+    if (typeof (value) === undefined ||typeof (value) === null) { return false }
+    if ((value).length == 0) { return false }
+    if (typeof (value) === "string" && (value).length > 0) { return true }
+}
+
+const createCollege = async function (req, res) {
+    try {
+        let data = req.body;
+        const { name, fullName, logoLink } = data;
+        if (Object.keys(data) == 0) return res.status(400).send({ status: false, msg: "NO data provided" })
+        if (!isValid(name)) { return res.status(400).send("Name is required") }
+        if (!isValid(fullName)) { return res.status(400).send("Full name is required") }
+        if (!isValid(logoLink)) { return res.status(400).send("Logo is required") }
+        const newCollege = await CollegeModel.create(data);
+        return res.status(201).send({ status: true, msg: newCollege })
+    }
+    catch (error) {
+        console.log(error)
+        return res.status(500).send({ msg: error.message })
+    }
+}
+
+const getColleges = async function (req, res) {
+    try {
+        let cName = req.query.collegeName
+        if (!cName) { return res.status(400).send("College name is required") }
+        let cId = await CollegeModel.find({ name: cName }).select({ _id: 1 })
+        if (cId.length==0) {return res.status(404).send("Please enter a valid name abbreviation in lowercase")}
+        let interns = await InternModel.find({ collegeId: cId }).select({ name: 1, email: 1, mobile: 1, _id: 1 })
+        let result = await CollegeModel.find({ name: cName }).select({ name: 1, fullName: 1, logoLink: 1, _id: 0 })
+
+        const obj = {
+            name: result[0].name,
+            fullName: result[0].fullName,
+            logoLink: result[0].logoLink,
+            interests: interns
+        }
+        return res.status(200).send({ status: true, data: obj })
+    }
+    catch (error) {
+        console.log(error)
+        return res.status(500).send({ msg: error.message })
+    }
+}
+
+
+
+
+
+
+module.exports.createCollege = createCollege;
+module.exports.getColleges = getColleges;
