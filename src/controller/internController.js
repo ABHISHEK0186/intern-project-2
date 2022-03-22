@@ -36,7 +36,7 @@ const createInterns = async function (req, res) {
 
         if (!isRightFormatmobile(mobile)) { return res.status(400).send({ status: false, msg: "Please enter a valid mobile number" }) }
 
-        // if (!isValidId(collegeId)) { return res.status(400).send({ status: false, msg: "Please enter a valid college id" }) }
+    
         const isMatch= await CollegeModel.findById(collegeId)
         if(!isMatch){return res.status(400).send({status:false, msg:"please enter a valid college id"})}
 
@@ -53,12 +53,6 @@ const createInterns = async function (req, res) {
 
 }
 
-// const isValidId = async function (req, res) {
-//     let id = req.body.collegeId
-//     let isMatch = await CollegeModel.findById(id)
-//     if (!isMatch) { return false }
-//     else { return true }
-// }
 
 
 module.exports.createInterns = createInterns;
