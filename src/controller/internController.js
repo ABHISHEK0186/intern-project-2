@@ -32,9 +32,15 @@ const createInterns = async function (req, res) {
 
         if (!isRightFormatemail(email)) { return res.status(400).send({ status: false, msg: "Please enter a valid email address" }) }
 
+        let duplicateEmail= await InternModel.findOne({email:email})
+        if(duplicateEmail){ return res.status(400).send({status: false, msg: "Email already exist"})}
+
         if (!isValid(mobile)) { return res.status(400).send({ status: false, msg: "Mobile is required" }) }
 
         if (!isRightFormatmobile(mobile)) { return res.status(400).send({ status: false, msg: "Please enter a valid mobile number" }) }
+
+        let duplicateMobile= await InternModel.findOne({mobile:mobile})
+        if(duplicateMobile){ return res.status(400).send({status: false, msg: "Mobile number already exist"})}
 
         // if (!isValidId(collegeId)) { return res.status(400).send({ status: false, msg: "Please enter a valid college id" }) }
         const isMatch= await CollegeModel.findById(collegeId)
