@@ -12,12 +12,18 @@ const createCollege = async function (req, res) {
     try {
         let data = req.body;
         const { name, fullName, logoLink } = data;
+        
         if (Object.keys(data) == 0) return res.status(400).send({ status: false, msg: "NO data provided" })
+
         if (!isValid(name)) { return res.status(400).send({status: false, msg:"Name is required"}) }
+
         let duplicateName= await CollegeModel.findOne({name:name})
         if(duplicateName){ return res.status(400).send({status: false, msg: "Can't create new college. College name already exist"})}
+
         if (!isValid(fullName)) { return res.status(400).send({status:false, msg: "Full name is required"}) }
+
         if (!isValid(logoLink)) { return res.status(400).send({status:false, msg:"Logo is required"}) }
+
         const newCollege = await CollegeModel.create(data);
         return res.status(201).send({ status: true, msg: newCollege })
     }
